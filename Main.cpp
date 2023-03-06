@@ -16,6 +16,8 @@ public:
 			   	wxID_ANY
 		);
 
+		panel->SetBackgroundColour(this->GetBackgroundColour());
+		
 		auto sizer = new wxFlexGridSizer(ROWS, COLS, margin, margin);
 		sizer->AddGrowableCol(0);
 		sizer->AddGrowableCol(1);

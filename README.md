@@ -14,7 +14,7 @@ To display the legacy side with Armenian glyphs, a compatible legacy font must b
 
 ## Desktop downloads
 
-Desktop release builds target Windows x86-64 and Ubuntu 24.04 x86-64. Windows packages contain the executable with wxWidgets and the C++ runtime linked statically. Linux archives bundle wxWidgets but require a compatible GTK 3 desktop and system libraries; they are not universal Linux executables. Extract the archive and run `run.sh` on Linux or the `.exe` on Windows. Windows executables are unsigned.
+Desktop release builds target Windows x86-64 and Ubuntu 24.04 x86-64. Windows packages contain the executable with wxWidgets and the C++ runtime linked statically. Linux archives bundle wxWidgets but require a compatible GTK 3 desktop and system libraries; they are not universal Linux executables. Extract the archive and run `arm_unicode_converter` directly on Linux or the `.exe` on Windows. Windows executables are unsigned.
 
 The GitHub Actions desktop workflow builds and tests both platforms before producing downloadable artifacts. Source builds remain available for other systems.
 

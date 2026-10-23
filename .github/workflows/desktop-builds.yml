@@ -1,10 +1,17 @@
 name: Desktop release builds
 on:
   workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build
+        type: choice
+        default: both
+        options: [both, linux, windows]
 permissions:
   contents: write
 jobs:
   linux:
+    if: inputs.platform != 'windows'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -21,13 +28,7 @@ jobs:
           cp LICENSE README.md package/ArmenianUnicodeConverter/
           for library in $(ldd build/arm_unicode_converter | awk '/libwx/{print $3}'); do cp -L "$library" package/ArmenianUnicodeConverter/lib/; done
           cp /usr/share/doc/libwxgtk3.2-1t64/copyright package/ArmenianUnicodeConverter/WXWIDGETS-LICENSE.txt
-          cat > package/ArmenianUnicodeConverter/run.sh <<'SCRIPT'
-          #!/bin/sh
-          app_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-          export LD_LIBRARY_PATH="$app_dir/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-          exec "$app_dir/arm_unicode_converter" "$@"
-          SCRIPT
-          chmod +x package/ArmenianUnicodeConverter/run.sh
+          LD_LIBRARY_PATH= ldd package/ArmenianUnicodeConverter/arm_unicode_converter
           tar -czf ArmenianUnicodeConverter-linux-ubuntu24.04-x86_64.tar.gz -C package ArmenianUnicodeConverter
       - uses: actions/upload-artifact@v4
         with:
@@ -38,6 +39,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload v0.2.0 ArmenianUnicodeConverter-linux-ubuntu24.04-x86_64.tar.gz --clobber
   windows:
+    if: inputs.platform != 'linux'
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4

@@ -12,6 +12,12 @@ This is not a general encoding detector or raw ANSI-file converter. It does not 
 
 To display the legacy side with Armenian glyphs, a compatible legacy font must be installed separately. Fonts are not bundled.
 
+## Desktop downloads
+
+Desktop release builds target Windows x86-64 and Ubuntu 24.04 x86-64. Windows packages contain the executable with wxWidgets and the C++ runtime linked statically. Linux archives bundle wxWidgets but require a compatible GTK 3 desktop and system libraries; they are not universal Linux executables. Extract the archive and run `run.sh` on Linux or the `.exe` on Windows. Windows executables are unsigned.
+
+The GitHub Actions desktop workflow builds and tests both platforms before producing downloadable artifacts. Source builds remain available for other systems.
+
 ## Build and run
 
 Requires CMake 3.16+, a C++17 compiler and wxWidgets development libraries (core, base and stc).

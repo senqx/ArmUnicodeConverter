@@ -1,0 +1,66 @@
+name: Desktop release builds
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install wxWidgets and virtual display
+        run: sudo apt-get update && sudo apt-get install -y libwxgtk3.2-dev xvfb
+      - name: Configure and build
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 2
+      - name: Test conversion and GUI
+        run: ctest --test-dir build --output-on-failure && xvfb-run -a ./build/gui_tests
+      - name: Package Linux executable
+        run: |
+          mkdir -p package/ArmenianUnicodeConverter/lib
+          cp build/arm_unicode_converter package/ArmenianUnicodeConverter/
+          cp LICENSE README.md package/ArmenianUnicodeConverter/
+          for library in $(ldd build/arm_unicode_converter | awk '/libwx/{print $3}'); do cp -L "$library" package/ArmenianUnicodeConverter/lib/; done
+          cp /usr/share/doc/libwxgtk3.2-1t64/copyright package/ArmenianUnicodeConverter/WXWIDGETS-LICENSE.txt
+          cat > package/ArmenianUnicodeConverter/run.sh <<'SCRIPT'
+          #!/bin/sh
+          app_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+          export LD_LIBRARY_PATH="$app_dir/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+          exec "$app_dir/arm_unicode_converter" "$@"
+          SCRIPT
+          chmod +x package/ArmenianUnicodeConverter/run.sh
+          tar -czf ArmenianUnicodeConverter-linux-ubuntu24.04-x86_64.tar.gz -C package ArmenianUnicodeConverter
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-executable
+          path: ArmenianUnicodeConverter-linux-ubuntu24.04-x86_64.tar.gz
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install wxWidgets with static runtime
+        shell: pwsh
+        run: |
+          & "$env:VCPKG_INSTALLATION_ROOT/vcpkg.exe" install wxwidgets:x64-windows-static
+      - name: Configure and build
+        shell: pwsh
+        run: |
+          cmake -S . -B build -A x64 "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>'
+          cmake --build build --config Release --parallel 2
+      - name: Test conversion and GUI
+        shell: pwsh
+        run: |
+          ctest --test-dir build -C Release --output-on-failure
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & ./build/Release/gui_tests.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Package Windows executable
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force package/ArmenianUnicodeConverter | Out-Null
+          Copy-Item build/Release/arm_unicode_converter.exe,LICENSE,README.md package/ArmenianUnicodeConverter/
+          Copy-Item "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows-static/share/wxwidgets/copyright" package/ArmenianUnicodeConverter/WXWIDGETS-LICENSE.txt
+          Compress-Archive -Path package/ArmenianUnicodeConverter -DestinationPath ArmenianUnicodeConverter-windows-x86_64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-executable
+          path: ArmenianUnicodeConverter-windows-x86_64.zip

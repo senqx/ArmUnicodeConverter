@@ -1,4 +1,5 @@
 #include "ConvertFunctions.hpp"
+#include "LiveConversion.hpp"
 #include "SymbolsHashTable.hpp"
 #include <stdexcept>
 #include <iostream>
@@ -18,5 +19,16 @@ int main() {
   }
   expect(UnicodeToTimes(u8"ԱԲԳ") == bytes(0xC2B2)+bytes(0xC2B4)+bytes(0xC2B6));
   expect(TimesToUnicode(bytes(0xC2AE)) == u8"…");
+  std::string large;
+  while(large.size()<10000000)large += u8"ԱԲԳ հայերեն 你好 🙂\n";
+  for(bool direction : {false,true}) {
+    LiveConversion live; live.start(large,direction);
+    int steps=0; while(!live.step())++steps;
+    expect(steps>100);
+    expect(live.result()==(direction?TimesToUnicode(large):UnicodeToTimes(large)));
+    live.start(large,direction); live.step(); live.start(u8"Ա",false);
+    while(!live.step()){};
+    expect(live.result()==UnicodeToTimes(u8"Ա"));
+  }
   std::cout << "All mapping entries, mixed Unicode, ASCII and truncated sequences passed\n";
 }

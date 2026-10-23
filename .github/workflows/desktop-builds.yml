@@ -2,7 +2,7 @@ name: Desktop release builds
 on:
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   linux:
     runs-on: ubuntu-24.04
@@ -33,6 +33,10 @@ jobs:
         with:
           name: linux-executable
           path: ArmenianUnicodeConverter-linux-ubuntu24.04-x86_64.tar.gz
+      - name: Upload validated Linux release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v0.2.0 ArmenianUnicodeConverter-linux-ubuntu24.04-x86_64.tar.gz --clobber
   windows:
     runs-on: windows-2022
     steps:
@@ -68,3 +72,7 @@ jobs:
         with:
           name: windows-executable
           path: ArmenianUnicodeConverter-windows-x86_64.zip
+      - name: Upload validated Windows release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v0.2.0 ArmenianUnicodeConverter-windows-x86_64.zip --clobber

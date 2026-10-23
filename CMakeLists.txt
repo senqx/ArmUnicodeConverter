@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(ArmUnicodeConverter LANGUAGES CXX)
+if(MSVC)
+  add_compile_options(/utf-8)
+endif()
 add_library(arm_conversion ConvertFunctions.cpp)
 target_compile_features(arm_conversion PUBLIC cxx_std_17)
 target_include_directories(arm_conversion PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

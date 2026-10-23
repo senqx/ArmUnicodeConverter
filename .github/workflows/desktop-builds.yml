@@ -58,7 +58,11 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force package/ArmenianUnicodeConverter | Out-Null
           Copy-Item build/Release/arm_unicode_converter.exe,LICENSE,README.md package/ArmenianUnicodeConverter/
-          Copy-Item "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows-static/share/wxwidgets/copyright" package/ArmenianUnicodeConverter/WXWIDGETS-LICENSE.txt
+          New-Item -ItemType Directory -Force package/ArmenianUnicodeConverter/licenses | Out-Null
+          Get-ChildItem "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows-static/share" -Directory | ForEach-Object {
+            $copyright = Join-Path $_.FullName 'copyright'
+            if (Test-Path $copyright) { Copy-Item $copyright "package/ArmenianUnicodeConverter/licenses/$($_.Name).txt" }
+          }
           Compress-Archive -Path package/ArmenianUnicodeConverter -DestinationPath ArmenianUnicodeConverter-windows-x86_64.zip
       - uses: actions/upload-artifact@v4
         with:

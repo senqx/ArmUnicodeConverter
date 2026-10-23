@@ -52,6 +52,11 @@ jobs:
         shell: pwsh
         run: |
           & "$env:VCPKG_INSTALLATION_ROOT/vcpkg.exe" install wxwidgets:x64-windows-static
+      - name: Save static dependency cache before tests
+        uses: actions/cache/save@v4
+        with:
+          path: C:/vcpkg/installed
+          key: windows-static-wxwidgets-v1
       - name: Configure and build
         shell: pwsh
         run: |

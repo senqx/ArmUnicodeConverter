@@ -1,4 +1,5 @@
 #include <wx/wx.h>
+#include <wx/evtloop.h>
 #undef wxIMPLEMENT_APP
 #define wxIMPLEMENT_APP(app) wxIMPLEMENT_APP_NO_MAIN(app)
 #include "../Main.cpp"
@@ -21,6 +22,8 @@ int main(int argc, char** argv) {
   wxTheApp->CallOnInit();
   int result=0;
   try {
+    wxGUIEventLoop eventLoop;
+    wxEventLoopActivator activate(&eventLoop);
     auto* legacy = dynamic_cast<wxStyledTextCtrl*>(wxWindow::FindWindowByName("legacy-input"));
     auto* unicode = dynamic_cast<wxStyledTextCtrl*>(wxWindow::FindWindowByName("unicode-input"));
     expect(legacy && unicode,"Missing editor controls");

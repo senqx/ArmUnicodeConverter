@@ -43,6 +43,11 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+      - name: Cache static wxWidgets installation
+        uses: actions/cache@v4
+        with:
+          path: C:/vcpkg/installed
+          key: windows-static-wxwidgets-v1
       - name: Install wxWidgets with static runtime
         shell: pwsh
         run: |

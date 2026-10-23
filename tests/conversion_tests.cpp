@@ -13,7 +13,7 @@ int main() {
     expect(TimesToUnicode(bytes(entry.first)) == bytes(entry.second));
   for(const auto& entry : UniToTimesSymbols)
     expect(UnicodeToTimes(bytes(entry.first)) == bytes(entry.second));
-  for(const std::string text : {std::string("ASCII 123\n"), std::string(u8"你好 🙂"), std::string("\xE2\x82"), std::string("\xFF",1)}) {
+  for(const std::string& text : {std::string("ASCII 123\n"), std::string(u8"你好 🙂"), std::string("\xE2\x82"), std::string("\xFF",1)}) {
     expect(TimesToUnicode(text)==text);expect(UnicodeToTimes(text)==text);
   }
   expect(UnicodeToTimes(u8"ԱԲԳ") == bytes(0xC2B2)+bytes(0xC2B4)+bytes(0xC2B6));

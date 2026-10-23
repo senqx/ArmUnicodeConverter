@@ -1,6 +1,6 @@
+#ifndef ARM_CONVERT_FUNCTIONS_HPP
+#define ARM_CONVERT_FUNCTIONS_HPP
 #include <string>
-#include "SymbolsHashTable.hpp"
-
-std::string UnicodeToTimes(const std::string &str);
-
-std::string TimesToUnicode(const std::string &str);
+std::string UnicodeToTimes(const std::string& text);
+std::string TimesToUnicode(const std::string& text);
+#endif

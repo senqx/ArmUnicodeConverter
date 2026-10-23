@@ -1,14 +1,9 @@
+#ifndef ARM_SYMBOLS_HASH_TABLE_HPP
+#define ARM_SYMBOLS_HASH_TABLE_HPP
+#include <cstdint>
 #include <unordered_map>
 
-#ifndef u_int16_t
-#define u_int16_t unsigned short
-#endif
-
-#ifndef u_int32_t
-#define u_int32_t unsigned int
-#endif
-
-const std::unordered_map<u_int16_t, const u_int32_t> TimesToUniSymbols {
+const std::unordered_map<std::uint16_t, const std::uint32_t> TimesToUniSymbols {
 	{0xC2B2, 0xD4B1},
 	{0xC2B4, 0xD4B2},
 	{0xC2B6, 0xD4B3},
@@ -101,7 +96,7 @@ const std::unordered_map<u_int16_t, const u_int32_t> TimesToUniSymbols {
 	{0xC2A9, 0x2E}		// Normal Dot
 };
 
-const std::unordered_map<u_int32_t, const u_int16_t> UniToTimesSymbols {
+const std::unordered_map<std::uint32_t, const std::uint16_t> UniToTimesSymbols {
 	{0xD4B1, 0xC2B2},
 	{0xD4B2, 0xC2B4},
 	{0xD4B3, 0xC2B6},
@@ -194,3 +189,5 @@ const std::unordered_map<u_int32_t, const u_int16_t> UniToTimesSymbols {
 	// {0x2E, 0xC2A9}		// Normal Dot (We don't really need it here)
 };
 
+
+#endif

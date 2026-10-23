@@ -3,6 +3,9 @@
 #include "ConvertFunctions.hpp"
 
 class MainFrame : public wxFrame {
+private:
+	bool converting = false;
+
 public:
 	MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
 		constexpr unsigned int COLS = 2;
@@ -51,10 +54,10 @@ public:
 		panel->SetSizer(sizer);
 
 		// Mutex to avoid chain reaction
-		bool converting = false;
+
 
 		timesInput->Bind(wxEVT_TEXT, 
-			[this, unicodeInput, &converting](wxCommandEvent& e) {
+			[this, unicodeInput](wxCommandEvent& e) {
 					if(!converting) {
 						converting = true;
 						std::string raw_text = e.GetString().utf8_string();
@@ -67,7 +70,7 @@ public:
 				});
 
 		unicodeInput->Bind(wxEVT_TEXT, 
-			[this, timesInput, &converting](wxCommandEvent& e) {
+			[this, timesInput](wxCommandEvent& e) {
 					if(!converting) {
 						converting = true;
 						std::string raw_text = e.GetString().utf8_string();
